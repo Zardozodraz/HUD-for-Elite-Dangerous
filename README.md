@@ -32,3 +32,8 @@ pip install -r requirements.txt
 
 `python HUD_Launcher.py` in a terminal or run `HUD_Launcher.py` directly.
 You can also run individual HUD modules directly, but this is not recommended due to potential overlay issues.
+
+## 📄 License
+
+This project is licensed under the [MIT License](./LICENSE).
+
