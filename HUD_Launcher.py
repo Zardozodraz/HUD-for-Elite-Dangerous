@@ -14,7 +14,7 @@ exobio_process = None
 
 def lancer_systeme():
     global sys_process
-    sys_process = subprocess.Popen(["python", "HUD_Systeme.py"])
+    sys_process = subprocess.Popen(["python", "HUD_System.py"])
 
 def arreter_systeme():
     global sys_process
