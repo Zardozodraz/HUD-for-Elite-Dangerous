@@ -81,12 +81,12 @@ def run():
     button2_color = COLOR1
     button2_text = "ExoBio"
 
-    button3_x = 50
+    '''button3_x = 50
     button3_y = 150
     button3_width = 150
     button3_height = 50
     button3_color = COLOR1
-    button3_text = "Fighting"
+    button3_text = "Fighting"'''
     
     button4_x = 300
     button4_y = 150
@@ -97,17 +97,17 @@ def run():
 
     button1_rect = pygame.Rect(button1_x, button1_y, button1_width, button1_height)
     button2_rect = pygame.Rect(button2_x, button2_y, button2_width, button2_height)
-    button3_rect = pygame.Rect(button3_x, button3_y, button3_width, button3_height)
+    '''button3_rect = pygame.Rect(button3_x, button3_y, button3_width, button3_height)'''
     button4_rect = pygame.Rect(button4_x, button4_y, button4_width, button4_height)
 
     texte_1 = police1.render(button1_text, True, WHITE)
     texte_2 = police1.render(button2_text, True, WHITE)
-    texte_3 = police1.render(button3_text, True, WHITE)
+    '''texte_3 = police1.render(button3_text, True, WHITE)'''
     texte_4 = police1.render(button4_text, True, WHITE)
 
     texte_1_rect = texte_1.get_rect(center=(button1_rect.centerx, button1_rect.centery))
     texte_2_rect = texte_2.get_rect(center=(button2_rect.centerx, button2_rect.centery))
-    texte_3_rect = texte_3.get_rect(center=(button3_rect.centerx, button3_rect.centery))
+    '''texte_3_rect = texte_3.get_rect(center=(button3_rect.centerx, button3_rect.centery))'''
     texte_4_rect = texte_4.get_rect(center=(button4_rect.centerx, button4_rect.centery))
     
     run = True
@@ -135,12 +135,12 @@ def run():
                 else:
                     button2_color = COLOR1
 
-                if button3_x <= x <= (button3_x + button3_width) and button3_y <= y <= (button3_y + button3_height):
+                '''if button3_x <= x <= (button3_x + button3_width) and button3_y <= y <= (button3_y + button3_height):
                     button3_color = COLOR3
                 elif HUD_Combat_running:
                     button3_color = COLOR2
                 else:
-                    button3_color = COLOR1
+                    button3_color = COLOR1'''
                     
                 if button4_x <= x <= (button4_x + button4_width) and button4_y <= y <= (button4_y + button4_height):
                     button4_color = COLOR3
@@ -175,13 +175,13 @@ def run():
                     HUD_ExoBio_running = False
                     
                 
-                if button3_x <= x <= (button3_x + button3_width) and button3_y <= y <= (button3_y + button3_height) and not HUD_Combat_running:
+                '''if button3_x <= x <= (button3_x + button3_width) and button3_y <= y <= (button3_y + button3_height) and not HUD_Combat_running:
                     print("Button 3 clicked")
                     HUD_Combat_running = True
                     
                 elif button3_x <= x <= (button3_x + button3_width) and button3_y <= y <= (button3_y + button3_height) and HUD_Combat_running:
                     print("Button 3 already running, stopping it")
-                    HUD_Combat_running = False
+                    HUD_Combat_running = False'''
                     
                 
                 if button4_x <= x <= (button4_x + button4_width) and button4_y <= y <= (button4_y + button4_height) and not HUD_Stats_running:
@@ -200,12 +200,12 @@ def run():
         # Dessiner les boutons
         pygame.draw.rect(fenetre, button1_color, button1_rect)
         pygame.draw.rect(fenetre, button2_color, button2_rect)
-        pygame.draw.rect(fenetre, button3_color, button3_rect)
+        '''pygame.draw.rect(fenetre, button3_color, button3_rect)'''
         pygame.draw.rect(fenetre, button4_color, button4_rect)
 
         fenetre.blit(texte_1, texte_1_rect)
         fenetre.blit(texte_2, texte_2_rect)
-        fenetre.blit(texte_3, texte_3_rect)
+        '''fenetre.blit(texte_3, texte_3_rect)'''
         fenetre.blit(texte_4, texte_4_rect)
 
         pygame.display.flip()
