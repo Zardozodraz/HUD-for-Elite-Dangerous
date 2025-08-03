@@ -58,7 +58,7 @@ class CombatHUD:
         self.root.configure(bg="black")
         self.root.wm_attributes("-topmost", True)
         self.root.attributes("-alpha", 0.85)
-        self.root.wm_attributes("-transparentcolor", "black")
+        #self.root.wm_attributes("-transparentcolor", "black")
         self.root.overrideredirect(True)
 
         self.text = tk.Text(
@@ -253,6 +253,8 @@ def monitor_journal(hud: CombatHUD):
 def main():
     hud = CombatHUD()
     threading.Thread(target=monitor_journal, args=(hud,), daemon=True).start()
+    
+    hud.update("")
     hud.run()
 
 if __name__ == "__main__":

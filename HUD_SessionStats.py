@@ -6,6 +6,7 @@ import tkinter as tk
 from string import ascii_uppercase
 from pathlib import Path
 from datetime import datetime
+import threading
 
 # ====================== HUD DE STATS ======================
 
@@ -13,7 +14,7 @@ class SessionHUD:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("HUD Session")
-        self.root.geometry("300x150+1610+10")
+        self.root.geometry("200x150+1710+10")
         self.root.configure(bg="black")
         self.root.wm_attributes("-topmost", True)
         self.root.attributes("-alpha", 0.85)
@@ -35,10 +36,14 @@ class SessionHUD:
         self.make_click_through()
         self.session_start = datetime.utcnow()
         self.stats = {
-            "credits": 0,
+            "buy": 0,
+            "sell": 0,
             "kills": 0,
             "distance": 0.0,
             "jumps": 0,
+            "bounty": 0,
+            "codex": 0,
+            "ExplorationData": 0,
         }
 
     def make_click_through(self):
@@ -48,12 +53,17 @@ class SessionHUD:
 
     def update(self):
         duration = datetime.utcnow() - self.session_start
-        text_content = (            
-            f"🤑 Crédits : {self.stats['credits']:,} cr\n"
-            f"☠️ Kills : {self.stats['kills']}\n"
-            f"🚀 Distance : {self.stats['distance']:.2f} AL\n"
-            f"🧭 Sauts : {self.stats['jumps']}"
-            f"⏱️ Session : {str(duration).split('.')[0]}\n"
+        text_content = (
+            f"Kills : {self.stats['kills']}\n"
+            f"Distance : {self.stats['distance']:.2f} AL\n"
+            f"Jumps : {self.stats['jumps']} \n"
+            f"Bounty : {self.stats['bounty']} cr\n"
+            f"Sell : {self.stats['sell']} cr\n"
+            f"Buy : {self.stats['buy']} cr\n"
+            f"Codex : {self.stats['codex']}\n"
+            f"Exploration : {self.stats['ExplorationData']}\n"
+
+            f"Session : {str(duration).split('.')[0]}\n"
         )
 
         self.text.config(state="normal")
@@ -105,13 +115,30 @@ def monitor_session(hud: SessionHUD):
                 event = data.get("event")
 
                 if event == "Bounty":
-                    reward = sum(e.get("Reward", 0) for e in data.get("Rewards", []))
-                    hud.stats["credits"] += reward
+                    hud.stats["bounty"] += data.get("TotalReward")
+                    hud.stats["kills"] += 1
+                
+                elif event == "PVPKill":
                     hud.stats["kills"] += 1
 
                 elif event == "FSDJump":
                     hud.stats["distance"] += data.get("JumpDist", 0.0)
                     hud.stats["jumps"] += 1
+
+                elif event == "MarketBuy":
+                    hud.stats["buy"] += data.get("TotalCost")
+
+                elif event == "MarketSell":
+                    hud.stats["sell"] += data.get("TotalSale")
+                
+                elif event == "BuyTradeData" or event == "BuyExplorationData":
+                    hud.stats["buy"] += data.get("Cost")
+                
+                elif event == "CodexEntry":
+                    hud.stats["codex"] += 1
+                
+                elif event == "MultiSellExplorationData":
+                    hud.stats["ExplorationData"] += data.get("TotalEarnings")
 
                 hud.update()
 
@@ -120,11 +147,15 @@ def monitor_session(hud: SessionHUD):
 
 # ====================== LANCEMENT ======================
 
+def update_loop(hud: SessionHUD):
+    while True:
+        hud.update()
+        time.sleep(1)  # met à jour toutes les secondes
+
 if __name__ == "__main__":
     hud = SessionHUD()
 
-    import threading
-    t = threading.Thread(target=monitor_session, args=(hud,), daemon=True)
-    t.start()
+    threading.Thread(target=monitor_session, args=(hud,), daemon=True).start()
+    threading.Thread(target=update_loop, args=(hud,), daemon=True).start()
 
     hud.run()

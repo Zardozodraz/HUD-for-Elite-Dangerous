@@ -10,6 +10,7 @@ pygame.display.set_caption("Elite HUD launcher")
 sys_process = None
 joystick_process = None
 exobio_process = None
+stats_process = None
 
 
 def lancer_systeme():
@@ -41,6 +42,17 @@ def arreter_exobio():
         exobio_process = None
 
 
+def lancer_stats():
+    global stats_process
+    stats_process = subprocess.Popen(["python", "HUD_SessionStats.py"])
+
+def arreter_stats():
+    global stats_process
+    if stats_process and stats_process.poll() is None:
+        stats_process.terminate() # ou .kill() si inefficace
+        stats_process = None
+
+
 def run():
     HUD_Systeme_running = False
     HUD_Stats_running = False
@@ -60,7 +72,7 @@ def run():
     button1_width = 150
     button1_height = 50
     button1_color = COLOR1
-    button1_text = "Systèmes"
+    button1_text = "Systems"
 
     button2_x = 300
     button2_y = 50
@@ -74,7 +86,7 @@ def run():
     button3_width = 150
     button3_height = 50
     button3_color = COLOR1
-    button3_text = "Combat"
+    button3_text = "Fighting"
     
     button4_x = 300
     button4_y = 150
@@ -174,10 +186,12 @@ def run():
                 
                 if button4_x <= x <= (button4_x + button4_width) and button4_y <= y <= (button4_y + button4_height) and not HUD_Stats_running:
                     print("Button 4 clicked")
+                    lancer_stats()
                     HUD_Stats_running = True
                     
                 elif button4_x <= x <= (button4_x + button4_width) and button4_y <= y <= (button4_y + button4_height) and HUD_Stats_running:
                     print("Button 4 already running, stopping it")
+                    arreter_stats()
                     HUD_Stats_running = False
                     
         

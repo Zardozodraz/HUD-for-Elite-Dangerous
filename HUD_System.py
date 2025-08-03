@@ -159,6 +159,8 @@ def monitor_journal(hud: SystemHUD):
 def main():
     hud = SystemHUD()
     threading.Thread(target=monitor_journal, args=(hud,), daemon=True).start()
+    
+    hud.update("", "")
     hud.run()
 
 if __name__ == "__main__":
