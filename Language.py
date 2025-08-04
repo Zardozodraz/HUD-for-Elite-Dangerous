@@ -37,6 +37,7 @@ french = {
         "ExoBio": "Exo-Bio",
         "Combat": "Combat",
         "Stats": "Stats",
+        "Lang": "Langue",
     },
 }
 
@@ -68,6 +69,7 @@ english = {
         "ExoBio": "Exo-Biology",
         "Combat": "Combat",
         "Stats": "Stats",
+        "Lang": "Language",
     },
 }
 

@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import json
 import ctypes
@@ -155,10 +156,19 @@ def update_loop(hud: SessionHUD):
         hud.update()
         time.sleep(1)  # met à jour toutes les secondes
 
-if __name__ == "__main__":
+def main():
+    global lang
+    
+    # Lecture d'un argument eventuel passé par le launcher
+    if len(sys.argv) > 1:
+        lang = sys.argv[1]
+    
     hud = SessionHUD()
 
     threading.Thread(target=monitor_session, args=(hud,), daemon=True).start()
     threading.Thread(target=update_loop, args=(hud,), daemon=True).start()
 
     hud.run()
+
+if __name__ == "__main__":
+    main()

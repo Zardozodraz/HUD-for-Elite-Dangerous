@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import time
 import ctypes
@@ -164,6 +165,12 @@ def monitor_journal(hud: SystemHUD):
 
 # ==================================== MAIN ====================================
 def main():
+    global lang
+    
+    # Lecture d'un argument eventuel passé par le launcher
+    if len(sys.argv) > 1:
+        lang = sys.argv[1]
+    
     hud = SystemHUD()
     threading.Thread(target=monitor_journal, args=(hud,), daemon=True).start()
     

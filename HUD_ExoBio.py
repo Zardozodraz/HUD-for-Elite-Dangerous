@@ -235,12 +235,16 @@ def monitor_journal(hud: ExoBioHUD):
 
 # ==================================== MAIN ====================================
 def main():
+    global lang
+    
     fenetreDecalee = False
 
     # Lecture d'un argument eventuel passé par le launcher
-    if len(sys.argv) > 1:
-        fenetreDecalee = sys.argv[1]
+    if len(sys.argv) > 2:
+        fenetreDecalee = sys.argv[2]
         print(f"[HUD-ExoBio] HUD System running : Recieved value : {fenetreDecalee}")
+        
+        lang = sys.argv[1]
         
     hud = ExoBioHUD(fenetreDecalee)
     threading.Thread(target=monitor_journal, args=(hud,), daemon=True).start()
