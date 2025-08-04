@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import time
 import ctypes
@@ -8,17 +9,24 @@ from pathlib import Path
 import requests
 from string import ascii_uppercase
 
+import Language # Language file
+lang = "english"
+
 interesting_keywords = [
     "White Dwarf", "Neutron", "Black", "Ammonia", "Water",
     "O (Blue-White)", "Herbig Ae/Be", "Wolf-Rayet",
     "CN", "CJ", "MS", "S-type", "Helium", "Class V", "Earth-like"
-] # Ajouter d'autres mots-clés si nécessaire
+] # Add other key-words if necessary :
+"High metal content world"
+"Rocky body"
+"Icy body"
+"Rocky Ice world"
 
 # ==================================== HUD ====================================
 class SystemHUD:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("HUD Système")
+        self.root.title("HUD System")
         self.root.geometry("500x100+10+10")
         self.root.configure(bg="black")
         self.root.wm_attributes("-topmost", True)
@@ -46,7 +54,7 @@ class SystemHUD:
         ctypes.windll.user32.SetWindowLongW(hwnd, -20, extended_style | 0x80000 | 0x20)
 
     def update(self, system, body_list):
-        text_content = f"Système : {system}\n"
+        text_content = f"{Language.languages[lang]["HUD_System"]["System"]} : {system}\n"
 
         if body_list:
             flat_line = " • ".join(body_list) # On sépare les corps par " • "
@@ -69,7 +77,7 @@ class SystemHUD:
                 line2 = flat_line[split_index:].lstrip(" • ")  # Supprime les espaces et séparateurs inutiles à la fin
                 text_content += line1 + "\n" + line2
         else:
-            text_content += "Aucun corps intéressant."
+            text_content += Language.languages[lang]["HUD_System"]["No_interesting_body"]
 
         self.text.config(state="normal")
         self.text.delete("1.0", "end")
@@ -119,7 +127,7 @@ def find_latest_journal():
         journal_files += list(d.glob("Journal.*.log"))
 
     if not journal_files: # Si aucun fichier journal n’a été trouvé, on lève une erreur
-        raise FileNotFoundError("Aucun fichier journal Elite Dangerous trouvé sur les disques.")
+        raise FileNotFoundError("No Elite Dangerous log files found.")
 
     latest_file = max(journal_files, key=os.path.getmtime) # Retourne le fichier le plus récent (le dernier modifié)
     return latest_file
@@ -128,7 +136,7 @@ def find_latest_journal():
 def monitor_journal(hud: SystemHUD):
     last_system = None
     journal_path = find_latest_journal()
-    print(f"[INFO] Lecture du journal : {journal_path}")
+    print(f"[INFO] Reading journal : {journal_path}")
 
     with open(journal_path, 'r', encoding='utf-8') as f:
         f.seek(0, os.SEEK_END)
@@ -151,12 +159,18 @@ def monitor_journal(hud: SystemHUD):
                             interesting = get_body_types(system)
                             hud.update(system, interesting)
                         except Exception as e:
-                            hud.update(system, [f"Erreur: {e}"])
+                            hud.update(system, [f"Error: {e}"])
             except json.JSONDecodeError:
                 continue
 
 # ==================================== MAIN ====================================
 def main():
+    global lang
+    
+    # Lecture d'un argument eventuel passé par le launcher
+    if len(sys.argv) > 1:
+        lang = sys.argv[1]
+    
     hud = SystemHUD()
     threading.Thread(target=monitor_journal, args=(hud,), daemon=True).start()
     
