@@ -7,12 +7,19 @@
 This project is a custom Heads-Up Display (HUD) for Elite Dangerous that provides real-time information for exploration and exobiology, session statistics (coming soon), and tactical decision support (planned). It reads the game’s journal logs to extract key data such as your current system, credits earned, kills, targets scanned, and more. The HUD is designed to be fast and lightweight, with a clean interface built using Python’s tkinter, and leverages modules like pygame and requests for enhanced functionality.
 
 ## 🚀 Features
-- Displays interesting planets and stars to scan in your current system (Universal Cartographics)
-- Highlights planets with potential exobiology and displays the possible hight-value species
-- Simple UI with `tkinter`
+### System HUD
+Displays interesting planets and stars to scan in your current system (Universal Cartographics)
+
+### Exo-bio HUD
+Displays the planets with potential exobiology and shows the possible hight-value species
+
+### Session stats HUD
+Displays: number of kills, total distance traveled, total jumps, bounties earned, total sales and purchases, new codex entries, exploration data sold, and session duration
+
+### Others
+- Simple UI with `tkinter` and `Pygame`
 - Lightweight and efficient
-- Coming soon: real-time session statistics (credits earned, kills, distance traveled, etc.)
-- Planned: risk analysis
+- **Planned**: risk analysis
 
 ## ⚙️ Installation
 
