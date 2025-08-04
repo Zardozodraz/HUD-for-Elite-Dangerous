@@ -2,16 +2,17 @@ import subprocess
 import pygame
 pygame.init()
 
+import Language # Language file
 
 fenetre = pygame.display.set_mode((500, 350), pygame.DOUBLEBUF, pygame.HWSURFACE)
 pygame.display.set_caption("Elite HUD launcher")
-
 
 sys_process = None
 joystick_process = None
 exobio_process = None
 stats_process = None
 
+lang = "english" # Set the default language used
 
 def lancer_systeme():
     global sys_process
@@ -54,6 +55,8 @@ def arreter_stats():
 
 
 def run():
+    global lang
+    
     HUD_Systeme_running = False
     HUD_Stats_running = False
     HUD_Combat_running = False
@@ -72,28 +75,28 @@ def run():
     button1_width = 150
     button1_height = 50
     button1_color = COLOR1
-    button1_text = "Systems"
+    button1_text = Language.languages[lang]["Launcher"]["Systems"] # In Language.py, target language, HUD name, target word
 
     button2_x = 300
     button2_y = 50
     button2_width = 150
     button2_height = 50
     button2_color = COLOR1
-    button2_text = "ExoBio"
+    button2_text = Language.languages[lang]["Launcher"]["ExoBio"]
 
     button3_x = 50
     button3_y = 150
     button3_width = 150
     button3_height = 50
     button3_color = COLOR1
-    button3_text = "Fighting"
+    button3_text = Language.languages[lang]["Launcher"]["Combat"]
     
     button4_x = 300
     button4_y = 150
     button4_width = 150
     button4_height = 50
     button4_color = COLOR1
-    button4_text = "Stats"
+    button4_text = Language.languages[lang]["Launcher"]["Stats"]
 
     button1_rect = pygame.Rect(button1_x, button1_y, button1_width, button1_height)
     button2_rect = pygame.Rect(button2_x, button2_y, button2_width, button2_height)

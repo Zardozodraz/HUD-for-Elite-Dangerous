@@ -8,6 +8,9 @@ from pathlib import Path
 from datetime import datetime
 import threading
 
+import Language # Language file
+lang = "english"
+
 # ====================== HUD DE STATS ======================
 
 class SessionHUD:
@@ -54,16 +57,16 @@ class SessionHUD:
     def update(self):
         duration = datetime.utcnow() - self.session_start
         text_content = (
-            f"Kills : {self.stats['kills']}\n"
-            f"Distance : {self.stats['distance']:.2f} AL\n"
-            f"Jumps : {self.stats['jumps']} \n"
-            f"Bounty : {self.stats['bounty']} cr\n"
-            f"Sell : {self.stats['sell']} cr\n"
-            f"Buy : {self.stats['buy']} cr\n"
-            f"Codex : {self.stats['codex']}\n"
-            f"Exploration : {self.stats['ExplorationData']}\n"
+            f"{Language.languages[lang]["HUD_SessionStats"]["Kills"]} : {self.stats['kills']}\n"
+            f"{Language.languages[lang]["HUD_SessionStats"]["Distance"]} : {self.stats['distance']:.2f} AL\n"
+            f"{Language.languages[lang]["HUD_SessionStats"]["Jumps"]} : {self.stats['jumps']} \n"
+            f"{Language.languages[lang]["HUD_SessionStats"]["Bounty"]} : {self.stats['bounty']} cr\n"
+            f"{Language.languages[lang]["HUD_SessionStats"]["Sell"]} : {self.stats['sell']} cr\n"
+            f"{Language.languages[lang]["HUD_SessionStats"]["Buy"]} : {self.stats['buy']} cr\n"
+            f"{Language.languages[lang]["HUD_SessionStats"]["Codex"]} : {self.stats['codex']}\n"
+            f"{Language.languages[lang]["HUD_SessionStats"]["Exploration"]} : {self.stats['ExplorationData']}\n"
 
-            f"Session : {str(duration).split('.')[0]}\n"
+            f"{Language.languages[lang]["HUD_SessionStats"]["Session"]} : {str(duration).split('.')[0]}\n"
         )
 
         self.text.config(state="normal")
@@ -92,14 +95,14 @@ def find_latest_journal():
         journal_files += list(d.glob("Journal.*.log"))
 
     if not journal_files:
-        raise FileNotFoundError("Aucun fichier journal Elite Dangerous trouvé.")
+        raise FileNotFoundError("No Elite Dangerous log files found.")
 
     latest_file = max(journal_files, key=os.path.getmtime)
     return latest_file
 
 def monitor_session(hud: SessionHUD):
     journal_path = find_latest_journal()
-    print(f"[INFO] Lecture du journal : {journal_path}")
+    print(f"[INFO] Reading journal : {journal_path}")
 
     with open(journal_path, 'r', encoding='utf-8') as f:
         f.seek(0, os.SEEK_END)

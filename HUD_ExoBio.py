@@ -9,6 +9,9 @@ from pathlib import Path
 import requests
 from string import ascii_uppercase
 
+import Language # Language file
+lang = "english"
+
 interesting_keywords = [ # Penser à enlever "Thin ", "Thick " et "Hot " dans le resultats des requètes
     ("Carbon dioxyde", "High metal content world", [("Aleolda x2", "7M"), ("Osseus", "7M"), ("Tubus", "7M"), ("Clypeus x3", "7M-15M"), ("Stratum", "15M")]),
     ("Carbon dioxide-rich", "High metal content world", [("Aleolda x2", "7M"), ("Osseus", "7M"), ("Tubus", "7M"), ("Clypeus x3", "7M-15M"), ("Stratum", "15M")]),
@@ -55,7 +58,7 @@ interesting_keywords = [ # Penser à enlever "Thin ", "Thick " et "Hot " dans le
 class ExoBioHUD:
     def __init__(self, fenetreDecalee="False"):
         self.root = tk.Tk()
-        self.root.title("HUD Système")
+        self.root.title("HUD Exo-Biology")
         self.root.geometry("500x500+10+10")
         self.root.configure(bg="black")
         self.root.wm_attributes("-topmost", True)
@@ -86,8 +89,10 @@ class ExoBioHUD:
         ctypes.windll.user32.SetWindowLongW(hwnd, -20, extended_style | 0x80000 | 0x20)
 
     def update(self, system, body_list, docked, use_save):
+        global lang
+        
         if not docked:
-            text_content = f"Exo-Biologie : {system}\n"
+            text_content = f"{Language.languages[lang]["HUD_ExoBio"]["Exo_Biology"]} : {system}\n"
 
             if body_list:
                 # Une ligne par corps : Atmosphère, Type, Nom
@@ -100,7 +105,7 @@ class ExoBioHUD:
                     lines = [f"{b[0]}, {b[1]}, {b[2]}, {vieFormat}\n"] # Format : "Atmosphère, Type, Nom, Vie (valeur)"
                     text_content += "\n".join(lines)
             else:
-                text_content += "Aucun corps intéressant."
+                text_content += Language.languages[lang]["HUD_ExoBio"]["No_interesting_body"]
             
             text_content_sauvegarde = text_content
         
@@ -180,7 +185,7 @@ def find_latest_journal():
         journal_files += list(d.glob("Journal.*.log"))
 
     if not journal_files: # Si aucun fichier journal n’a été trouvé, on lève une erreur
-        raise FileNotFoundError("Aucun fichier journal Elite Dangerous trouvé sur les disques.")
+        raise FileNotFoundError("No Elite Dangerous log files found.")
 
     latest_file = max(journal_files, key=os.path.getmtime) # Retourne le fichier le plus récent (le dernier modifié)
     return latest_file
@@ -189,7 +194,7 @@ def find_latest_journal():
 def monitor_journal(hud: ExoBioHUD):
     last_system = None
     journal_path = find_latest_journal()
-    print(f"[INFO] Lecture du journal : {journal_path}")
+    print(f"[INFO] Reading journal : {journal_path}")
 
     with open(journal_path, 'r', encoding='utf-8') as f:
         f.seek(0, os.SEEK_END)
@@ -222,7 +227,7 @@ def monitor_journal(hud: ExoBioHUD):
                             interesting = get_body_types(system)
                             hud.update(system, interesting, docked, use_save=True)
                         except Exception as e:
-                            hud.update(system, [f"Erreur: {e}"])
+                            hud.update(system, [f"Error: {e}"])
                 
                     
             except json.JSONDecodeError:
@@ -235,7 +240,7 @@ def main():
     # Lecture d'un argument eventuel passé par le launcher
     if len(sys.argv) > 1:
         fenetreDecalee = sys.argv[1]
-        print(f"[HUD-ExoBio] HUD Système lancé : Valeur reçue : {fenetreDecalee}")
+        print(f"[HUD-ExoBio] HUD System running : Recieved value : {fenetreDecalee}")
         
     hud = ExoBioHUD(fenetreDecalee)
     threading.Thread(target=monitor_journal, args=(hud,), daemon=True).start()
