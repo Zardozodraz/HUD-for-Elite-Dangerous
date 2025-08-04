@@ -18,7 +18,7 @@ class SessionHUD:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("HUD Session")
-        self.root.geometry("200x150+1710+10")
+        self.root.geometry("200x180+1710+10")
         self.root.configure(bg="black")
         self.root.wm_attributes("-topmost", True)
         self.root.attributes("-alpha", 0.85)
@@ -54,6 +54,17 @@ class SessionHUD:
         hwnd = ctypes.windll.user32.GetParent(self.root.winfo_id())
         extended_style = ctypes.windll.user32.GetWindowLongW(hwnd, -20)
         ctypes.windll.user32.SetWindowLongW(hwnd, -20, extended_style | 0x80000 | 0x20)
+    
+    def update_window_height(self):
+        self.text.update_idletasks()  # Met à jour le rendu du widget
+        bbox = self.text.bbox("1.0")  # Bounding box du premier caractère
+        if bbox is None:
+            return 0, 0  # Aucun texte affiché
+        height = bbox[3]
+        num_lines = int(self.text.index("end-1c").split('.')[0])
+        total_height = height * (num_lines - 1)
+        
+        self.root.geometry(f"200x{total_height}+1710+10")
 
     def update(self):
         duration = datetime.utcnow() - self.session_start
@@ -74,6 +85,8 @@ class SessionHUD:
         self.text.delete("1.0", "end")
         self.text.insert("1.0", text_content)
         self.text.config(state="disabled")
+        
+        self.update_window_height()
 
     def run(self):
         self.root.mainloop()
