@@ -27,17 +27,6 @@ from string import ascii_uppercase
 import Language # Language file
 lang = "english" # default language
 
-interesting_keywords = [
-    "White Dwarf", "Neutron", "Black", "Ammonia", "Water",
-    "O (Blue-White)", "Herbig Ae/Be", "Wolf-Rayet",
-    "CN", "CJ", "MS", "S-type", "Helium", "Class V", "Earth-like"
-] # Add other key-words if necessary :
-"High metal content world"
-"Rocky body"
-"Icy body"
-"Rocky Ice world"
-"..."
-
 # ==================================== HUD ====================================
 class SystemHUD:
     """
@@ -133,6 +122,22 @@ class SystemHUD:
         self.root.mainloop()
 
 # ==================================== RÉCUPÉRATION DES DONNÉES ====================================
+def readJson(key):
+    """
+    Read and return the value of the key in interestingTypes.json
+    
+    Args:
+        key (_type_): The keyword in the json dictionnary
+    
+    Returns:
+        (bool): If a body sub-type is "interesting" or not.
+    """
+    
+    with open("interestingTypes.json", "r", encoding="utf-8") as f:
+        isInteresting = json.load(f)[key]
+    
+    return isInteresting
+
 def get_body_types(system_name):
     """
     Queries EDSM for celestial bodies in a given system and filters for interesting types based on their type (star, planet) and their subtype (Earth-like, Class V, etc.);
@@ -151,14 +156,14 @@ def get_body_types(system_name):
     response.raise_for_status()
     data = response.json()
 
-    types = []
+    #types = []
     interesting_type = []
     for body in data.get("bodies", []):
-        b_type = body.get("type")
+        #b_type = body.get("type") # Inutile
         b_subtype = body.get("subType")
-        types.append(f"{b_type} - {b_subtype}")
+        #types.append(f"{b_type} - {b_subtype}")
 
-        if any(keyword in b_subtype for keyword in interesting_keywords):
+        if readJson(b_subtype):
             interesting_type.append(b_subtype)
     #print(types)
     #print(interesting_type)

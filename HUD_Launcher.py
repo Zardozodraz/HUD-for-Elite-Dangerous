@@ -14,6 +14,7 @@ Language support is loaded from the external Language.py module.
 """
 
 import subprocess
+import os
 import pygame
 pygame.init()
 
@@ -169,6 +170,8 @@ def Choose_lang(fenetre):
     
     return chosen_Lang
 
+def Choose_Interesting():
+    os.startfile("interestingTypes.json")
 
 def run():
     """
@@ -201,6 +204,11 @@ def run():
     button_Lang_height = 50
     button_Lang_color = WHITE
     button_Lang_text = Language.languages[lang]["Launcher"]["Lang"] # In Language.py, target language, HUD name, target word
+    
+    button_InterestingTypes_x = 200
+    button_InterestingTypes_y = 150
+    button_InterestingTypes_width = 50
+    button_InterestingTypes_height = 50
 
     button1_x = 50
     button1_y = 150
@@ -231,6 +239,7 @@ def run():
     button4_text = Language.languages[lang]["Launcher"]["Stats"]
 
     button_Lang_rect = pygame.Rect(button_Lang_x, button_Lang_y, button_Lang_width, button_Lang_height)
+    #button_InterestingTypes_rect = pygame.Rect(button_InterestingTypes_x, button_InterestingTypes_y, button_InterestingTypes_width, button_InterestingTypes_height)
     button1_rect = pygame.Rect(button1_x, button1_y, button1_width, button1_height)
     button2_rect = pygame.Rect(button2_x, button2_y, button2_width, button2_height)
     button3_rect = pygame.Rect(button3_x, button3_y, button3_width, button3_height)
@@ -248,6 +257,11 @@ def run():
     texte_3_rect = texte_3.get_rect(center=(button3_rect.centerx, button3_rect.centery))
     texte_4_rect = texte_4.get_rect(center=(button4_rect.centerx, button4_rect.centery))
     
+    ImageInterestingTypes = pygame.image.load("HUD_System_Setting_Icon.png")
+    ImageInterestingTypes = pygame.transform.scale(ImageInterestingTypes, (45, 45))
+    #ImageInterestingTypes_rect = ImageInterestingTypes.get_rect(topleft=(button_InterestingTypes_x + 5, button_InterestingTypes_y + 5))
+    InterestingTypesCOLOR = WHITE
+    
     run = True
     while run:
         for event in pygame.event.get():
@@ -263,6 +277,11 @@ def run():
                     button_Lang_color = YELLOW
                 else:
                     button_Lang_color = WHITE
+                
+                if button_InterestingTypes_x <= x <= (button_InterestingTypes_x + button_InterestingTypes_width) and button_InterestingTypes_y <= y <= (button_InterestingTypes_y + button_InterestingTypes_height):
+                    InterestingTypesCOLOR = YELLOW
+                else:
+                    InterestingTypesCOLOR = WHITE
                     
                 if button1_x <= x <= (button1_x + button1_width) and button1_y <= y <= (button1_y + button1_height):
                     button1_color = BLUE
@@ -316,6 +335,12 @@ def run():
                     texte_2_rect = texte_2.get_rect(center=(button2_rect.centerx, button2_rect.centery))
                     texte_3_rect = texte_3.get_rect(center=(button3_rect.centerx, button3_rect.centery))
                     texte_4_rect = texte_4.get_rect(center=(button4_rect.centerx, button4_rect.centery))
+                    
+                
+                if button_InterestingTypes_x <= x <= (button_InterestingTypes_x + button_InterestingTypes_width) and button_InterestingTypes_y <= y <= (button_InterestingTypes_y + button_InterestingTypes_height) and not HUD_Systeme_running:
+                    print("Button InterestingTypes clicked")
+                    Choose_Interesting()
+                    
                 
                 if button1_x <= x <= (button1_x + button1_width) and button1_y <= y <= (button1_y + button1_height) and not HUD_Systeme_running:
                     print("Button 1 clicked")
@@ -369,6 +394,9 @@ def run():
         pygame.draw.rect(fenetre, button2_color, button2_rect)
         pygame.draw.rect(fenetre, button3_color, button3_rect)
         pygame.draw.rect(fenetre, button4_color, button4_rect)
+        
+        pygame.draw.rect(fenetre, InterestingTypesCOLOR, (button_InterestingTypes_x, button_InterestingTypes_y, 50, 50))
+        fenetre.blit(ImageInterestingTypes, (button_InterestingTypes_x + 2, button_InterestingTypes_y + 2))
         
         fenetre.blit(texte_Lang, texte_Lang_rect)
         fenetre.blit(texte_1, texte_1_rect)
