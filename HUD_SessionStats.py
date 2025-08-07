@@ -1,3 +1,24 @@
+"""
+Session statistics HUD for Elite Dangerous
+
+This module creates a translucent overlay using Tkinter to display :
+- Total buy/sell
+- Number of kills
+- Total distance travelled
+- Number of jumps
+- Total bounty earned
+- Number of new codex entry
+- Total Exploration data sold
+- Session duration
+
+Features:
+- Monitors the Elite Dangerous journal in real-time.
+- Detects all the events listed above.
+- Displays results in a transparent HUD always on top-right of the screen.
+
+This script is intended to be launched directly or from a launcher but can be launched independently.
+"""
+
 import os
 import sys
 import time
@@ -15,7 +36,27 @@ lang = "english"
 # ====================== HUD DE STATS ======================
 
 class SessionHUD:
+    """
+    A transparent and click-through Tkinter window that displays :
+    - Total buy/sell
+    - Number of kills
+    - Total distance travelled
+    - Number of jumps
+    - Total bounty earned
+    - Number of new codex entry
+    - Total Exploration data sold
+    - Session duration
+
+    Methods:
+        update(system, body_list): Updates the HUD content.
+        run(): Starts the Tkinter main loop.
+    """
+    
     def __init__(self):
+        """
+        Initializes the HUD window with transparent background and non-interactive settings.
+        """
+        
         self.root = tk.Tk()
         self.root.title("HUD Session")
         self.root.geometry("200x150+1710+10")
@@ -51,11 +92,31 @@ class SessionHUD:
         }
 
     def make_click_through(self):
+        """
+        Makes the HUD window click-through using Windows API.
+        """
+        
         hwnd = ctypes.windll.user32.GetParent(self.root.winfo_id())
         extended_style = ctypes.windll.user32.GetWindowLongW(hwnd, -20)
         ctypes.windll.user32.SetWindowLongW(hwnd, -20, extended_style | 0x80000 | 0x20)
 
     def update(self):
+        """
+        Updates the displayed info :
+        - Total buy/sell
+        - Number of kills
+        - Total distance travelled
+        - Number of jumps
+        - Total bounty earned
+        - Number of new codex entry
+        - Total Exploration data sold
+        - Session duration
+
+        Args:
+            system (str): The current star system name.
+            body_list (List[str]): A list of interesting celestial body types or notes.
+        """
+        
         duration = datetime.utcnow() - self.session_start
         text_content = (
             f"{Language.languages[lang]["HUD_SessionStats"]["Kills"]} : {self.stats['kills']}\n"
@@ -76,11 +137,25 @@ class SessionHUD:
         self.text.config(state="disabled")
 
     def run(self):
+        """
+        Runs the Tkinter main loop to display the HUD.
+        """
+        
         self.root.mainloop()
 
 # ====================== JOURNAL ======================
 
 def find_latest_journal():
+    """
+    Searches for the latest Elite Dangerous journal file in all available hard-drives.
+
+    Returns:
+        Path: Path to the most recently modified journal file.
+
+    Raises:
+        FileNotFoundError: If no journal files are found.
+    """
+    
     candidate_dirs = []
     for drive_letter in ascii_uppercase:
         root = Path(f"{drive_letter}:\\")
@@ -102,6 +177,14 @@ def find_latest_journal():
     return latest_file
 
 def monitor_session(hud: SessionHUD):
+    """
+    Monitors the latest Elite Dangerous journal for the events related to the displayed info,
+    updates the HUD when a new system is entered.
+
+    Args:
+        hud (SystemHUD): The HUD instance to update with system and body data.
+    """
+    
     journal_path = find_latest_journal()
     print(f"[INFO] Reading journal : {journal_path}")
 
@@ -152,11 +235,26 @@ def monitor_session(hud: SessionHUD):
 # ====================== LANCEMENT ======================
 
 def update_loop(hud: SessionHUD):
+    """
+    Update the HUD every second to keep the session duration running.
+
+    Args:
+        hud (SessionHUD): The HUD instance
+    """
     while True:
         hud.update()
         time.sleep(1)  # met à jour toutes les secondes
 
 def main():
+    """
+    Entry point for the script.
+
+    - Reads language info from command-line arguments (if any).
+    - Initializes the HUD.
+    - Starts the journal monitoring in a background thread.
+    - Launches the HUD main loop.
+    """
+    
     global lang
     
     # Lecture d'un argument eventuel passé par le launcher

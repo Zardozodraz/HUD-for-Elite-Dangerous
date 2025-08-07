@@ -1,13 +1,15 @@
-# This file defines all the words displayed on the HUDs, translated into multiple languages.
-# Structure:
-#   language_name = {
-#       "HUD_Name": {
-#           "Key": "Translated Text",
-#           ...
-#       },
-#       ...
-#   }
-# To add a new language, replicate the same structure using the appropriate translations.
+"""
+This file defines all the words displayed on the HUDs, translated into multiple languages.
+Structure:
+  language_name = {
+      "HUD_Name": {
+          "Key": "Translated Text",
+          ...
+      },
+      ...
+  }
+To add a new language, replicate the same structure using the appropriate translations.
+"""
 
 french = {
     "HUD_System": {

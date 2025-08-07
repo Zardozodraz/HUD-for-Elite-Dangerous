@@ -1,3 +1,18 @@
+"""
+Launcher for Elite Dangerous HUDs (Heads-Up Displays).
+
+This script provides a graphical interface using Pygame to launch and manage multiple HUD modules
+used in Elite Dangerous, including system stats, exobiology tools, and session statistics. It also
+offers a language selection menu.
+
+Modules launched:
+- HUD_System.py
+- HUD_ExoBio.py
+- HUD_SessionStats.py
+
+Language support is loaded from the external Language.py module.
+"""
+
 import subprocess
 import pygame
 pygame.init()
@@ -12,13 +27,21 @@ joystick_process = None
 exobio_process = None
 stats_process = None
 
-lang = "english" # Set the default language used
+lang = "english" # default language
 
 def lancer_systeme():
+    """
+    Launches the system HUD module as a subprocess.
+    """
+    
     global sys_process
     sys_process = subprocess.Popen(["python", "HUD_System.py", lang])
 
 def arreter_systeme():
+    """
+    Terminates the system HUD subprocess if running.
+    """
+    
     global sys_process
     if sys_process and sys_process.poll() is None:
         sys_process.terminate() # ou .kill() si inefficace
@@ -26,6 +49,13 @@ def arreter_systeme():
 
 
 def lancer_exobio(HUD_Systeme_running):
+    """
+    Launches the ExoBiology HUD module as a subprocess.
+
+    Args:
+        HUD_Systeme_running (bool): Whether the system HUD is running, to adjust window position.
+    """
+    
     global exobio_process
     
     decalerFenetreExobio = "False"
@@ -37,6 +67,10 @@ def lancer_exobio(HUD_Systeme_running):
     exobio_process = subprocess.Popen(["python", "HUD_ExoBio.py", lang, decalerFenetreExobio])
 
 def arreter_exobio():
+    """
+    Terminates the ExoBiology HUD subprocess if running.
+    """
+    
     global exobio_process
     if exobio_process and exobio_process.poll() is None:
         exobio_process.terminate() # ou .kill() si inefficace
@@ -44,10 +78,18 @@ def arreter_exobio():
 
 
 def lancer_stats():
+    """
+    Launches the session statistics HUD module as a subprocess.
+    """
+    
     global stats_process
     stats_process = subprocess.Popen(["python", "HUD_SessionStats.py", lang])
 
 def arreter_stats():
+    """
+    Terminates the session statistics HUD subprocess if running.
+    """
+    
     global stats_process
     if stats_process and stats_process.poll() is None:
         stats_process.terminate() # ou .kill() si inefficace
@@ -55,6 +97,16 @@ def arreter_stats():
 
 
 def Choose_lang(fenetre):
+    """
+    Displays a Pygame interface to allow the user to select a language.
+
+    Args:
+        fenetre (pygame.Surface): The Pygame window surface.
+
+    Returns:
+        str: The chosen language code ("french" or "english").
+    """
+    
     police = pygame.font.Font(None, 30)
     
     chosen_Lang = ""
@@ -119,6 +171,13 @@ def Choose_lang(fenetre):
 
 
 def run():
+    """
+    Main loop of the launcher interface.
+
+    Displays clickable buttons to launch or stop each HUD component.
+    Handles real-time interaction and language switching.
+    """
+    
     global lang
     
     HUD_Systeme_running = False

@@ -1,3 +1,18 @@
+"""
+System HUD for Elite Dangerous
+
+This module creates a translucent overlay using Tkinter to display the current star system
+and any "interesting" celestial bodies after a jump, based on EDSM data.
+
+Features:
+- Monitors the Elite Dangerous journal in real-time.
+- Detects new systems upon FSD jumps.
+- Queries the EDSM API to find notable celestial bodies.
+- Displays results in a transparent HUD always on top-left of the screen.
+
+This script is intended to be launched directly or from a launcher but can be launched independently.
+"""
+
 import os
 import sys
 import json
@@ -10,7 +25,7 @@ import requests
 from string import ascii_uppercase
 
 import Language # Language file
-lang = "english"
+lang = "english" # default language
 
 interesting_keywords = [
     "White Dwarf", "Neutron", "Black", "Ammonia", "Water",
@@ -21,10 +36,24 @@ interesting_keywords = [
 "Rocky body"
 "Icy body"
 "Rocky Ice world"
+"..."
 
 # ==================================== HUD ====================================
 class SystemHUD:
+    """
+    A transparent and click-through Tkinter window that displays the current system name
+    and interesting celestial bodies.
+
+    Methods:
+        update(system, body_list): Updates the HUD content.
+        run(): Starts the Tkinter main loop.
+    """
+    
     def __init__(self):
+        """
+        Initializes the HUD window with transparent background and non-interactive settings.
+        """
+    
         self.root = tk.Tk()
         self.root.title("HUD System")
         self.root.geometry("500x100+10+10")
@@ -49,11 +78,23 @@ class SystemHUD:
         self.make_click_through()
 
     def make_click_through(self):
+        """
+        Makes the HUD window click-through using Windows API.
+        """
+        
         hwnd = ctypes.windll.user32.GetParent(self.root.winfo_id())
         extended_style = ctypes.windll.user32.GetWindowLongW(hwnd, -20)
         ctypes.windll.user32.SetWindowLongW(hwnd, -20, extended_style | 0x80000 | 0x20)
 
     def update(self, system, body_list):
+        """
+        Updates the displayed system name and body list.
+
+        Args:
+            system (str): The current star system name.
+            body_list (List[str]): A list of interesting celestial body types or notes.
+        """
+
         text_content = f"{Language.languages[lang]["HUD_System"]["System"]} : {system}\n"
 
         if body_list:
@@ -85,10 +126,24 @@ class SystemHUD:
         self.text.config(state="disabled")
 
     def run(self):
+        """
+        Runs the Tkinter main loop to display the HUD.
+        """
+        
         self.root.mainloop()
 
 # ==================================== RÉCUPÉRATION DES DONNÉES ====================================
 def get_body_types(system_name):
+    """
+    Queries EDSM for celestial bodies in a given system and filters for interesting types based on their type (star, planet) and their subtype (Earth-like, Class V, etc.);
+
+    Args:
+        system_name (str): Name of the star system.
+
+    Returns:
+        List[str]: Subtypes of bodies considered interesting.
+    """
+    
     url = "https://www.edsm.net/api-system-v1/bodies"
     params = {"systemName": system_name, "showBodies": True}
     response = requests.get(url, params=params)
@@ -111,6 +166,16 @@ def get_body_types(system_name):
     return interesting_type
 
 def find_latest_journal():
+    """
+    Searches for the latest Elite Dangerous journal file in all available hard-drives.
+
+    Returns:
+        Path: Path to the most recently modified journal file.
+
+    Raises:
+        FileNotFoundError: If no journal files are found.
+    """
+    
     # Recherche sur tous les disques montés (Windows uniquement)
     candidate_dirs = []
     for drive_letter in ascii_uppercase:
@@ -134,6 +199,14 @@ def find_latest_journal():
 
 # ==================================== SURVEILLANCE DU JOURNAL ====================================
 def monitor_journal(hud: SystemHUD):
+    """
+    Monitors the latest Elite Dangerous journal for FSDJump events,
+    updates the HUD when a new system is entered.
+
+    Args:
+        hud (SystemHUD): The HUD instance to update with system and body data.
+    """
+    
     last_system = None
     journal_path = find_latest_journal()
     print(f"[INFO] Reading journal : {journal_path}")
@@ -165,6 +238,15 @@ def monitor_journal(hud: SystemHUD):
 
 # ==================================== MAIN ====================================
 def main():
+    """
+    Entry point for the script.
+
+    - Reads language from command-line arguments (if any).
+    - Initializes the HUD.
+    - Starts the journal monitoring in a background thread.
+    - Launches the HUD main loop.
+    """
+    
     global lang
     
     # Lecture d'un argument eventuel passé par le launcher
